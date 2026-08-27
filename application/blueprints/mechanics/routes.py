@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from marshmallow import ValidationError
-from application.extensions import db
+from application.extensions import db, cache
 from application.models import Mechanic
 from . import mechanics_bp
 from .schemas import mechanic_schema, mechanics_schema
@@ -21,6 +21,7 @@ def create_mechanic():
 
 
 @mechanics_bp.route('/', methods=['GET'])
+@cache.cached(timeout=60) # Cached for 60s to reduce repetitive database queries on this read-heavy route
 def get_mechanics():
     mechanics = db.session.query(Mechanic).all()
     return mechanics_schema.jsonify(mechanics), 200

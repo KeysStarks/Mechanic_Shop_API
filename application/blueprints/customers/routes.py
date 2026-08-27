@@ -1,12 +1,13 @@
 from flask import request, jsonify
 from marshmallow import ValidationError
-from application.extensions import db
+from application.extensions import db, limiter
 from application.models import Customer
 from . import customers_bp
 from .schemas import customer_schema, customers_schema
 
 
 @customers_bp.route('/', methods=['POST'])
+@limiter.limit("3 per hour") # Rate limited to prevent abuse/spam account creation
 def create_customer():
     try:
         customer_data = customer_schema.load(request.json)
