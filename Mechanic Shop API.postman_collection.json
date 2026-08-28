@@ -17,7 +17,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"name\": \"Keys Starks\",\n    \"email\": \"Keystarks2@gmail.com\",\n    \"phone\": \"6145551111\"\n}",
+              "raw": "{\n    \"name\": \"Keys Starks\",\n    \"email\": \"Keystarks2@gmail.com\",\n    \"phone\": \"6145551111\",\n    \"password\": \"password123\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -329,6 +329,48 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Customer Pagination",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:5000/customers/?page=1&per_page=2",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5000",
+              "path": [
+                "customers",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "per_page",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -460,6 +502,50 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Create Service Tickets Edit",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"add_ids\": [2],\n  \"remove_ids\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:5000/service-tickets/1/edit",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "5000",
+              "path": [
+                "service-tickets",
+                "1",
+                "edit"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Most Active Mechanics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -473,7 +559,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"VIN\": \"1HGCM82633A123456\",\n  \"service_date\": \"2026-08-26\",\n  \"service_desc\": \"Brake replacement\",\n  \"customer_id\": 4\n}",
+              "raw": "{\n  \"VIN\": \"1HGCM82633A123456\",\n  \"service_date\": \"2026-08-26\",\n  \"service_desc\": \"Brake replacement\",\n  \"customer_id\": 2\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -597,6 +683,17 @@
                 "remove-mechanic",
                 "4"
               ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "New Request",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
             }
           },
           "response": []

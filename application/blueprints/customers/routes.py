@@ -53,8 +53,19 @@ def create_customer():
 
 @customers_bp.route('/', methods=['GET'])
 def get_customers():
-    customers = db.session.query(Customer).all()
-    return customers_schema.jsonify(customers), 200
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
+
+    query = db.session.query(Customer)
+    total = query.count()
+    customers = query.limit(per_page).offset((page - 1) * per_page).all()
+
+    return jsonify({
+        'page': page,
+        'per_page': per_page,
+        'total': total,
+        'customers': customers_schema.dump(customers)
+    }), 200
 
 
 @customers_bp.route('/<int:customer_id>', methods=['GET'])
