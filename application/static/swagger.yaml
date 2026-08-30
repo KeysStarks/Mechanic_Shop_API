@@ -1,0 +1,543 @@
+swagger: "2.0"
+info:
+  title: "Mechanic Shop API"
+  description: "An API for managing a mechanic shop's customers, mechanics, service tickets, and inventory"
+  version: "1.0.0"
+host: "127.0.0.1:5000"
+schemes:
+  - "http"
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+
+paths:
+  /customers/login:
+    post:
+      tags:
+        - customers
+      summary: "Customer Login"
+      description: "Validates customer email and password, returns a JWT auth token."
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Customer login credentials"
+          required: true
+          schema:
+            $ref: "#/definitions/LoginCredentials"
+      responses:
+        200:
+          description: "Successful login, returns JWT token"
+          schema:
+            $ref: "#/definitions/LoginResponse"
+        401:
+          description: "Invalid email or password"
+
+  /customers:
+    post:
+      tags:
+        - customers
+      summary: "Create a new customer"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "New customer data"
+          required: true
+          schema:
+            $ref: "#/definitions/CustomerInput"
+      responses:
+        201:
+          description: "Customer created"
+          schema:
+            $ref: "#/definitions/CustomerResponse"
+        400:
+          description: "Validation error"
+    get:
+      tags:
+        - customers
+      summary: "Get all customers (paginated)"
+      parameters:
+        - in: "query"
+          name: "page"
+          type: "integer"
+          required: false
+        - in: "query"
+          name: "per_page"
+          type: "integer"
+          required: false
+      responses:
+        200:
+          description: "A list of customers"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/CustomerResponse"
+
+  /customers/{id}:
+    put:
+      tags:
+        - customers
+      summary: "Update a customer"
+      parameters:
+        - in: "path"
+          name: "id"
+          type: "integer"
+          required: true
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/CustomerInput"
+      responses:
+        200:
+          description: "Customer updated"
+          schema:
+            $ref: "#/definitions/CustomerResponse"
+        404:
+          description: "Customer not found"
+    delete:
+      tags:
+        - customers
+      summary: "Delete a customer"
+      parameters:
+        - in: "path"
+          name: "id"
+          type: "integer"
+          required: true
+      responses:
+        200:
+          description: "Customer deleted"
+        404:
+          description: "Customer not found"
+
+  /mechanics:
+    post:
+      tags:
+        - mechanics
+      summary: "Create a new mechanic"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "New mechanic data"
+          required: true
+          schema:
+            $ref: "#/definitions/MechanicInput"
+      responses:
+        201:
+          description: "Mechanic created"
+          schema:
+            $ref: "#/definitions/MechanicResponse"
+        400:
+          description: "Validation error"
+    get:
+      tags:
+        - mechanics
+      summary: "Get all mechanics"
+      responses:
+        200:
+          description: "A list of mechanics"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/MechanicResponse"
+
+  /mechanics/{id}:
+    put:
+      tags:
+        - mechanics
+      summary: "Update a mechanic"
+      parameters:
+        - in: "path"
+          name: "id"
+          type: "integer"
+          required: true
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/MechanicInput"
+      responses:
+        200:
+          description: "Mechanic updated"
+          schema:
+            $ref: "#/definitions/MechanicResponse"
+        404:
+          description: "Mechanic not found"
+    delete:
+      tags:
+        - mechanics
+      summary: "Delete a mechanic"
+      parameters:
+        - in: "path"
+          name: "id"
+          type: "integer"
+          required: true
+      responses:
+        200:
+          description: "Mechanic deleted"
+        404:
+          description: "Mechanic not found"
+
+  /mechanics/most-active:
+    get:
+      tags:
+        - mechanics
+      summary: "Get mechanics sorted by number of service tickets worked"
+      description: "Returns mechanics ordered from most to least service tickets."
+      responses:
+        200:
+          description: "Mechanics sorted by activity"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/MechanicResponse"
+
+  /inventory:
+    post:
+      tags:
+        - inventory
+      summary: "Create a new inventory part"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "New part data"
+          required: true
+          schema:
+            $ref: "#/definitions/InventoryInput"
+      responses:
+        201:
+          description: "Part created"
+          schema:
+            $ref: "#/definitions/InventoryResponse"
+        400:
+          description: "Validation error"
+    get:
+      tags:
+        - inventory
+      summary: "Get all inventory parts"
+      responses:
+        200:
+          description: "A list of inventory parts"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/InventoryResponse"
+
+  /inventory/{part_id}:
+    get:
+      tags:
+        - inventory
+      summary: "Get a single inventory part"
+      parameters:
+        - in: "path"
+          name: "part_id"
+          type: "integer"
+          required: true
+      responses:
+        200:
+          description: "The requested part"
+          schema:
+            $ref: "#/definitions/InventoryResponse"
+        404:
+          description: "Part not found"
+    put:
+      tags:
+        - inventory
+      summary: "Update an inventory part"
+      parameters:
+        - in: "path"
+          name: "part_id"
+          type: "integer"
+          required: true
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/InventoryInput"
+      responses:
+        200:
+          description: "Part updated"
+          schema:
+            $ref: "#/definitions/InventoryResponse"
+        404:
+          description: "Part not found"
+    delete:
+      tags:
+        - inventory
+      summary: "Delete an inventory part"
+      parameters:
+        - in: "path"
+          name: "part_id"
+          type: "integer"
+          required: true
+      responses:
+        200:
+          description: "Part deleted"
+        404:
+          description: "Part not found"
+
+  /service-tickets/:
+    post:
+      tags:
+        - service-tickets
+      summary: "Create a new service ticket"
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/ServiceTicketInput"
+      responses:
+        201:
+          description: "Service ticket created"
+          schema:
+            $ref: "#/definitions/ServiceTicketResponse"
+        400:
+          description: "Validation error"
+    get:
+      tags:
+        - service-tickets
+      summary: "Get all service tickets"
+      responses:
+        200:
+          description: "A list of service tickets"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/ServiceTicketResponse"
+
+  /service-tickets/{ticket_id}/assign-mechanic/{mechanic_id}:
+    put:
+      tags:
+        - service-tickets
+      summary: "Assign a mechanic to a service ticket"
+      parameters:
+        - in: "path"
+          name: "ticket_id"
+          type: "integer"
+          required: true
+        - in: "path"
+          name: "mechanic_id"
+          type: "integer"
+          required: true
+      responses:
+        200:
+          description: "Mechanic assigned"
+          schema:
+            $ref: "#/definitions/ServiceTicketResponse"
+        400:
+          description: "Mechanic already assigned to this ticket"
+        404:
+          description: "Service ticket or mechanic not found"
+
+  /service-tickets/{ticket_id}/remove-mechanic/{mechanic_id}:
+    put:
+      tags:
+        - service-tickets
+      summary: "Remove a mechanic from a service ticket"
+      parameters:
+        - in: "path"
+          name: "ticket_id"
+          type: "integer"
+          required: true
+        - in: "path"
+          name: "mechanic_id"
+          type: "integer"
+          required: true
+      responses:
+        200:
+          description: "Mechanic removed"
+          schema:
+            $ref: "#/definitions/ServiceTicketResponse"
+        400:
+          description: "Mechanic is not assigned to this ticket"
+        404:
+          description: "Service ticket or mechanic not found"
+
+  /service-tickets/{ticket_id}/edit:
+    put:
+      tags:
+        - service-tickets
+      summary: "Bulk add/remove mechanics on a service ticket"
+      parameters:
+        - in: "path"
+          name: "ticket_id"
+          type: "integer"
+          required: true
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/EditTicketInput"
+      responses:
+        200:
+          description: "Service ticket updated"
+          schema:
+            $ref: "#/definitions/ServiceTicketResponse"
+        404:
+          description: "Service ticket not found"
+
+  /service-tickets/{ticket_id}/add-part/{part_id}:
+    put:
+      tags:
+        - service-tickets
+      summary: "Add an inventory part to a service ticket"
+      parameters:
+        - in: "path"
+          name: "ticket_id"
+          type: "integer"
+          required: true
+        - in: "path"
+          name: "part_id"
+          type: "integer"
+          required: true
+      responses:
+        200:
+          description: "Part added to ticket"
+          schema:
+            $ref: "#/definitions/ServiceTicketResponse"
+        400:
+          description: "Part already added to this ticket"
+        404:
+          description: "Service ticket or part not found"
+
+definitions:
+  LoginCredentials:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+      password:
+        type: "string"
+    required:
+      - email
+      - password
+
+  LoginResponse:
+    type: "object"
+    properties:
+      status:
+        type: "string"
+      message:
+        type: "string"
+      auth_token:
+        type: "string"
+
+  CustomerInput:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+      email:
+        type: "string"
+      phone:
+        type: "string"
+      password:
+        type: "string"
+    required:
+      - name
+      - email
+      - password
+
+  CustomerResponse:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      name:
+        type: "string"
+      email:
+        type: "string"
+      phone:
+        type: "string"
+
+  MechanicInput:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+      email:
+        type: "string"
+      phone:
+        type: "string"
+      salary:
+        type: "number"
+    required:
+      - name
+      - email
+
+  MechanicResponse:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      name:
+        type: "string"
+      email:
+        type: "string"
+      phone:
+        type: "string"
+      salary:
+        type: "number"
+
+  ServiceTicketInput:
+    type: "object"
+    properties:
+      VIN:
+        type: "string"
+      service_date:
+        type: "string"
+      service_desc:
+        type: "string"
+      customer_id:
+        type: "integer"
+    required:
+      - VIN
+      - customer_id
+
+  ServiceTicketResponse:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      VIN:
+        type: "string"
+      service_date:
+        type: "string"
+      service_desc:
+        type: "string"
+      customer_id:
+        type: "integer"
+
+  EditTicketInput:
+    type: "object"
+    properties:
+      add_ids:
+        type: "array"
+        items:
+          type: "integer"
+      remove_ids:
+        type: "array"
+        items:
+          type: "integer"
+
+  InventoryInput:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+      price:
+        type: "number"
+    required:
+      - name
+      - price
+
+  InventoryResponse:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      name:
+        type: "string"
+      price:
+        type: "number"
