@@ -11,6 +11,7 @@ A Flask REST API for managing a mechanic shop's customers, mechanics, service ti
 - Flask-Caching
 - python-jose (JWT authentication)
 - python-dotenv
+- flask-swagger / flask-swagger-ui (API documentation)
 
 ## Project Structure
 
@@ -23,9 +24,16 @@ mechanic-shop-api/
 │ │ └── inventory/
 │ ├── utils/
 │ │ └── util.py
+│ ├── static/
+│ │ └── swagger.yaml
 │ ├── extensions.py
 │ ├── models.py
 │ └── init.py
+├── tests/
+│ ├── test_customers.py
+│ ├── test_mechanics.py
+│ ├── test_service_tickets.py
+│ └── test_inventory.py
 ├── app.py
 ├── config.py
 ├── .env
@@ -42,7 +50,7 @@ mechanic-shop-api/
    source venv/bin/activate
 
 3. Install dependencies:
-   pip install flask flask-sqlalchemy flask-marshmallow marshmallow-sqlalchemy mysql-connector-python flask-limiter flask-caching python-jose python-dotenv
+   pip install flask flask-sqlalchemy flask-marshmallow marshmallow-sqlalchemy mysql-connector-python flask-limiter flask-caching python-jose python-dotenv flask-swagger flask-swagger-ui
 
 4. Create a MySQL database:
 
@@ -101,6 +109,15 @@ The API will be available at `http://127.0.0.1:5000`.
 Customers log in via `POST /customers/login` with `email` and `password`, receiving a JWT `auth_token` valid for 1 hour. Protected routes require the header:
 Authorization: Bearer <token>
 
+## API Documentation
+
+Interactive API documentation is available at `http://127.0.0.1:5000/api/docs` once the app is running, powered by Swagger UI. It covers every endpoint's request/response shape, and includes an "Authorize" button for testing token-protected routes directly from the docs. The underlying spec lives at `application/static/swagger.yaml`.
+
 ## Testing
 
-A Postman collection (`Mechanic Shop API.postman_collection.json`) is included in this repo with example requests for every endpoint above, organized by resource.
+A full unit test suite covers every endpoint in the API, including negative test cases (validation errors, not-found responses, unauthorized access). Tests use Python's built-in `unittest` module against an isolated SQLite database, so they never touch production data.
+
+To run the full suite:
+python -m unittest discover tests
+
+A Postman collection (`Mechanic Shop API.postman_collection.json`) is also included in this repo with example requests for every endpoint, organized by resource.
