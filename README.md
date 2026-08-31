@@ -2,20 +2,31 @@
 
 A Flask REST API for managing a mechanic shop's customers, mechanics, service tickets, and parts inventory — built using the Application Factory pattern, SQLAlchemy ORM, Marshmallow schemas, token authentication, rate limiting, and caching.
 
+## Live Deployment
+
+This API is deployed and live at: **https://mechanic-shop-api-onrender-com.onrender.com**
+
+Interactive Swagger documentation: **https://mechanic-shop-api-onrender-com.onrender.com/api/docs**
+
 ## Tech Stack
 
 - Python / Flask
-- Flask-SQLAlchemy (MySQL)
+- Flask-SQLAlchemy (MySQL locally / PostgreSQL in production)
 - Flask-Marshmallow
 - Flask-Limiter
 - Flask-Caching
 - python-jose (JWT authentication)
 - python-dotenv
 - flask-swagger / flask-swagger-ui (API documentation)
+- Gunicorn (production WSGI server)
+- psycopg2-binary (PostgreSQL driver for production)
 
 ## Project Structure
 
 mechanic-shop-api/
+├── .github/
+│ └── workflows/
+│ └── main.yaml
 ├── application/
 │ ├── blueprints/
 │ │ ├── customers/
@@ -34,8 +45,9 @@ mechanic-shop-api/
 │ ├── test_mechanics.py
 │ ├── test_service_tickets.py
 │ └── test_inventory.py
-├── app.py
+├── flask_app.py
 ├── config.py
+├── requirements.txt
 ├── .env
 └── Mechanic Shop API.postman_collection.json
 
@@ -63,9 +75,11 @@ mechanic-shop-api/
    SECRET_KEY=your_jwt_secret_key
 
 6. Run the app:
-   python app.py
+7. Run the app:
+   python flask_app.py
 
-The API will be available at `http://127.0.0.1:5000`.
+   Note: `flask_app.py` is configured to run with `ProductionConfig`, which reads `SQLALCHEMY_DATABASE_URI` from your environment. To run against a local database, point that variable at your local MySQL instance instead of a hosted one.
+   The API will be available at `http://127.0.0.1:5000`.
 
 ## API Endpoints
 
@@ -108,6 +122,16 @@ The API will be available at `http://127.0.0.1:5000`.
 
 Customers log in via `POST /customers/login` with `email` and `password`, receiving a JWT `auth_token` valid for 1 hour. Protected routes require the header:
 Authorization: Bearer <token>
+
+## CI/CD Pipeline
+
+This project uses GitHub Actions for continuous integration and deployment, defined in `.github/workflows/main.yaml`. On every push to `main`:
+
+1. **build** — installs all dependencies from `requirements.txt`
+2. **test** — runs the full unit test suite (37 tests) against an isolated SQLite database
+3. **deploy** — only runs if both `build` and `test` succeed, and triggers an automatic redeploy on Render
+
+This means broken code can never reach the live production API — every deploy is gated behind a passing test suite.
 
 ## API Documentation
 
