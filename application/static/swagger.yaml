@@ -11,6 +11,13 @@ consumes:
 produces:
   - "application/json"
 
+securityDefinitions:
+  BearerAuth:
+    type: "apiKey"
+    name: "Authorization"
+    in: "header"
+    description: "Enter your token as: Bearer <token>"
+
 paths:
   /customers/login:
     post:
@@ -72,17 +79,14 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/CustomerResponse"
-
-  /customers/{id}:
     put:
       tags:
         - customers
-      summary: "Update a customer"
+      summary: "Update the logged-in customer's own account"
+      description: "Updates whichever customer the auth token belongs to — there is no path parameter, the token determines the target."
+      security:
+        - BearerAuth: []
       parameters:
-        - in: "path"
-          name: "id"
-          type: "integer"
-          required: true
         - in: "body"
           name: "body"
           required: true
@@ -98,7 +102,21 @@ paths:
     delete:
       tags:
         - customers
-      summary: "Delete a customer"
+      summary: "Delete the logged-in customer's own account"
+      description: "Deletes whichever customer the auth token belongs to — there is no path parameter, the token determines the target."
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: "Customer deleted"
+        404:
+          description: "Customer not found"
+
+  /customers/{id}:
+    get:
+      tags:
+        - customers
+      summary: "Get a single customer by id"
       parameters:
         - in: "path"
           name: "id"
@@ -106,9 +124,26 @@ paths:
           required: true
       responses:
         200:
-          description: "Customer deleted"
+          description: "The requested customer"
+          schema:
+            $ref: "#/definitions/CustomerResponse"
         404:
           description: "Customer not found"
+
+  /customers/my-tickets:
+    get:
+      tags:
+        - customers
+      summary: "Get all service tickets belonging to the logged-in customer"
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: "A list of the customer's service tickets"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/ServiceTicketResponse"
 
   /mechanics:
     post:
