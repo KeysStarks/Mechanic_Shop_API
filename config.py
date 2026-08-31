@@ -12,3 +12,7 @@ class TestingConfig:
     DEBUG = True
     CACHE_TYPE = 'NullCache'
     RATELIMIT_ENABLED = False
+    
+class ProductionConfig:
+    SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI')
+    CACHE_TYPE = "SimpleCache"
